@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Web2App Pro - Convertisseur HTML vers APK</title>
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        :root {
+            --primary: #1a2332;
+            --primary-light: #2c3a4e;
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #1a2332;
+            --text-secondary: #5e6f84;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1440px;
+            width: 100%;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .header-left h1 {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .header-left h1 small {
+            font-size: 0.5em;
+            font-weight: 400;
+            color: var(--text-secondary);
+            background: #eef2f7;
+            padding: 2px 12px;
+            border-radius: 30px;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+            margin-top: 2px;
+        }
+
+        .header-badge {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: var(--card-bg);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== GRID ===== */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* ===== FORM CARD ===== */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 28px 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .form-group label .required {
+            color: #e53e3e;
+            margin-left: 2px;
+        }
+
+        .form-group .helper {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: #fafcfe;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6c8cff;
+            box-shadow: 0 0 0 4px rgba(108, 140, 255, 0.1);
+            background: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* Icon picker */
+        .icon-picker {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        .icon-picker .icon-preview-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            background: #f8fafc;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-picker .icon-preview-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .icon-picker .icon-preview-wrap .placeholder-icon {
+            font-size: 1.8rem;
+            color: #b0becd;
+        }
+
+        .icon-picker .icon-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .icon-picker .icon-actions .btn-small {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .icon-picker .icon-actions .btn-small:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* Color picker inline */
+        .color-inline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-inline input[type="color"] {
+            width: 44px;
+            height: 44px;
+            padding: 2px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: none;
+        }
+
+        .color-inline .color-hex {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        /* Orientation selector with visual buttons */
+        .orientation-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .orientation-selector .ori-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #fafcfe;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .orientation-selector .ori-btn .ori-icon {
+            font-size: 1.4rem;
+        }
+
+        .orientation-selector .ori-btn:hover {
+            border-color: #6c8cff;
+            background: #f0f4ff;
+        }
+
+        .orientation-selector .ori-btn.active {
+            border-color: #6c8cff;
+            background: #ebf0ff;
+            color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 140, 255, 0.15);
+        }
+
+        /* Generate button */
+        .btn-generate {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .btn-generate:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(26, 35, 50, 0.2);
+        }
+
+        .btn-generate:active {
+            transform: scale(0.98);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Status message */
+        .status-msg {
+            margin-top: 16px;
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeSlide 0.3s ease;
+        }
+
+        .status-msg.loading {
+            display: block;
+            background: #ebf4ff;
+            color: #1a56db;
+            border: 1px solid #bdd3ff;
+        }
+
+        .status-msg.success {
+            display: block;
+            background: #e6f7ed;
+            color: #0b6e41;
+            border: 1px solid #b2dfc8;
+        }
+
+        .status-msg.error {
+            display: block;
+            background: #fde8e8;
+            color: #b91c1c;
+            border: 1px solid #f8c4c4;
+        }
+
+        .status-msg .download-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-weight: 700;
+            color: #1a56db;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== SIMULATOR ===== */
+        .simulator-card {
+            position: sticky;
+            top: 20px;
+        }
+
+        .simulator-card .card {
+            padding: 24px 24px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .simulator-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .simulator-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .simulator-header .device-toggle {
+            display: flex;
+            gap: 4px;
+            background: #f0f4f8;
+            padding: 3px;
+            border-radius: 30px;
+        }
+
+        .simulator-header .device-toggle button {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .simulator-header .device-toggle button.active {
+            background: #fff;
+            color: var(--text);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .simulator-header .device-toggle button:hover:not(.active) {
+            color: var(--text);
+        }
+
+        /* Phone frame */
+        .phone-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-frame {
+            background: #0b0f14;
+            border-radius: 44px;
+            padding: 14px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            width: 280px;
+        }
+
+        .phone-frame.ios {
+            border-radius: 48px;
+            padding: 16px;
+        }
+
+        .phone-frame.android {
+            border-radius: 36px;
+            padding: 12px;
+        }
+
+        /* La taille de l'écran change selon l'orientation */
+        .phone-screen {
+            background: #fff;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            aspect-ratio: 9 / 19;
+            position: relative;
+        }
+
+        .phone-screen.landscape {
+            aspect-ratio: 19 / 9;
+        }
+
+        .phone-screen.portrait {
+            aspect-ratio: 9 / 19;
+        }
+
+        .phone-screen.default {
+            aspect-ratio: 9 / 19;
+        }
+
+        /* Status bar */
+        .status-bar {
+            padding: 6px 14px 2px 14px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: var(--text);
+            background: #fff;
+            flex-shrink: 0;
+            min-height: 28px;
+            align-items: center;
+        }
+
+        .status-bar .time {
+            font-weight: 800;
+            font-size: 0.6rem;
+        }
+
+        .status-bar .icons {
+            display: flex;
+            gap: 4px;
+            font-size: 0.6rem;
+        }
+
+        /* Notch simulation */
+        .notch {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 24px;
+            background: #0b0f14;
+            border-radius: 0 0 14px 14px;
+            z-index: 2;
+        }
+
+        .phone-frame.ios .notch {
+            display: block;
+        }
+
+        /* App content */
+        .app-content {
+            flex: 1;
+            padding: 0 10px 12px 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-content iframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            border-radius: 12px;
+            background: #f8fafc;
+            min-height: 100px;
+        }
+
+        .app-content .fallback {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 20px;
+            min-height: 120px;
+        }
+
+        .app-content .fallback .big-icon {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+        }
+
+        .app-content .fallback .app-name-preview {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        /* Simulator info */
+        .simulator-info {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .simulator-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .main-grid {
+                grid-template-columns: 1fr 360px;
+                gap: 24px;
+            }
+            .phone-frame {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .simulator-card {
+                position: static;
+            }
+            .phone-frame {
+                width: 260px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-row-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 540px) {
+            body {
+                padding: 12px;
+            }
+            .card {
+                padding: 18px 16px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-row-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .phone-frame {
+                width: 200px;
+                padding: 10px;
+            }
+            .phone-frame.ios {
+                padding: 12px;
+            }
+            .phone-frame.android {
+                padding: 8px;
+            }
+            .phone-screen {
+                border-radius: 20px;
+            }
+            .simulator-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            .simulator-header .device-toggle {
+                align-self: center;
+            }
+            .icon-picker {
+                flex-wrap: wrap;
+            }
+            .orientation-selector .ori-btn {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
+            .orientation-selector .ori-btn .ori-icon {
+                font-size: 1.2rem;
+            }
+            .header-badge .badge {
+                font-size: 0.7rem;
+                padding: 4px 12px;
+            }
+            .simulator-info {
+                font-size: 0.6rem;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .phone-frame {
+                width: 170px;
+                padding: 8px;
+            }
+            .phone-frame.ios {
+                padding: 10px;
+            }
+            .phone-screen {
+                border-radius: 16px;
+            }
+            .status-bar {
+                font-size: 0.45rem;
+                min-height: 22px;
+                padding: 4px 10px 0 10px;
+            }
+            .app-content {
+                padding: 0 6px 8px 6px;
+            }
+            .card {
+                padding: 14px 12px;
+            }
+            .form-group {
+                margin-bottom: 12px;
+            }
+            .form-group input,
+            .form-group select {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            .btn-generate {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Scroll personnalisé */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f4f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Toast pour le téléchargement */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .toast .toast-close {
+            margin-left: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            border-radius: 30px;
+            padding: 2px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <h1>
+                📱 Web2App
+                <small>Pro</small>
+            </h1>
+            <p>Transformez n'importe quelle page web en application mobile native</p>
+        </div>
+        <div class="header-badge">
+            <span class="badge">🔄 APK / IPA</span>
+            <span class="badge">⚡ WebView</span>
+            <span class="badge">🎨 Personnalisable</span>
+        </div>
+    </header>
+
+    <!-- GRID -->
+    <div class="main-grid">
+
+        <!-- ===== FORMULAIRE ===== -->
+        <div class="form-card card">
+            <h2 class="card-title">⚙️ Configuration</h2>
+            <p class="card-subtitle">Remplissez tous les champs pour générer votre application</p>
+
+            <form id="appForm" novalidate>
+                <!-- URL -->
+                <div class="form-group">
+                    <label>URL de la page web <span class="required">*</span></label>
+                    <input type="url" id="appUrl" value="https://demo.pwabuilder.com/" placeholder="https://mon-site.com" required />
+                    <div class="helper">L'application affichera cette page dans une WebView intégrée</div>
+                </div>
+
+                <!-- Nom + Package ID -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom de l'application <span class="required">*</span></label>
+                        <input type="text" id="appName" value="Ma Super App" placeholder="Mon App" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Package ID <span class="required">*</span></label>
+                        <input type="text" id="packageId" value="com.monprenom.masuperapp" placeholder="com.example.app" required />
+                        <div class="helper">Identifiant unique (ex: com.monprenom.app)</div>
+                    </div>
+                </div>
+
+                <!-- Icône -->
+                <div class="form-group">
+                    <label>Icône de l'application (512x512)</label>
+                    <div class="icon-picker">
+                        <div class="icon-preview-wrap">
+                            <img id="iconPreview" src="https://cdn-icons-png.flaticon.com/512/5969/5969059.png" alt="icône" />
+                        </div>
+                        <div class="icon-actions">
+                            <input type="url" id="iconUrl" value="https://cdn-icons-png.flaticon.com/512/5969/5969059.png" placeholder="URL de l'icône" style="flex:1; min-width:160px; padding:8px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:0.85rem;" />
+                            <button type="button" class="btn-small" id="resetIcon">🔄 Défaut</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Version + Couleur + Thème -->
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Version</label>
+                        <input type="text" id="appVersion" value="1.0.0" placeholder="1.0.0" />
+                    </div>
+                    <div class="form-group">
+                        <label>Couleur primaire</label>
+                        <div class="color-inline">
+                            <input type="color" id="primaryColor" value="#1a2332" />
+                            <span class="color-hex" id="colorHex">#1a2332</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Thème</label>
+                        <select id="theme">
+                            <option value="light">☀️ Clair</option>
+                            <option value="dark">🌙 Sombre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Orientation -->
+                <div class="form-group">
+                    <label>Orientation de l'application <span class="required">*</span></label>
+                    <div class="orientation-selector" id="orientationSelector">
+                        <button type="button" class="ori-btn active" data-value="portrait">
+                            <span class="ori-icon">📱</span>
+                            Portrait
+                        </button>
+                        <button type="button" class="ori-btn" data-value="landscape">
+                            <span class="ori-icon">📱</span>
+                            Paysage
+                        </button>
+                        <button type="button" class="ori-btn" data-value="default">
+                            <span class="ori-icon">🔄</span>
+                            Auto
+                        </button>
+                    </div>
+                    <input type="hidden" id="orientation" value="portrait" />
+                    <div class="helper">L'orientation préférée de votre application sur le téléphone</div>
+                </div>
+
+                <!-- Bouton -->
+                <button type="submit" class="btn-generate" id="generateBtn">
+                    <span>🚀</span> Générer l'APK
+                </button>
+            </form>
+
+            <div id="statusMessage" class="status-msg"></div>
+        </div>
+
+        <!-- ===== SIMULATEUR ===== -->
+        <div class="simulator-card">
+            <div class="card">
+                <div class="simulator-header">
+                    <h3>📲 Aperçu en direct</h3>
+                    <div class="device-toggle">
+                        <button id="btnAndroid" class="active">🤖</button>
+                        <button id="btnIos">🍎</button>
+                    </div>
+                </div>
+
+                <div class="phone-wrapper">
+                    <div class="phone-frame android" id="phoneFrame">
+                        <div class="phone-screen portrait" id="phoneScreen">
+                            <div class="notch"></div>
+                            <div class="status-bar">
+                                <span class="time" id="statusTime">9:41</span>
+                                <span class="icons">📶 🔋</span>
+                            </div>
+                            <div class="app-content" id="appContent">
+                                <div class="fallback" id="fallbackContent">
+                                    <div class="big-icon">🌐</div>
+                                    <div class="app-name-preview" id="previewAppName">Ma Super App</div>
+                                    <div style="margin-top:4px; font-size:0.7rem; color:#b0becd;">Aperçu de l'application</div>
+                                </div>
+                                <iframe id="previewIframe" style="display:none;" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="simulator-info">
+                    <span>📦 <span id="previewPackage">com.monprenom.masuperapp</span></span>
+                    <span>📐 <span id="previewOrientation">Portrait</span></span>
+                    <span>🖥️ <span id="previewDevice">Android</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <span id="toastMessage">✅ APK prêt !</span>
+    <button class="toast-close" id="toastClose">✕</button>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ===== DOM =====
+        const form = document.getElementById('appForm');
+        const appUrl = document.getElementById('appUrl');
+        const appName = document.getElementById('appName');
+        const packageId = document.getElementById('packageId');
+        const iconUrl = document.getElementById('iconUrl');
+        const iconPreview = document.getElementById('iconPreview');
+        const resetIcon = document.getElementById('resetIcon');
+        const appVersion = document.getElementById('appVersion');
+        const orientation = document.getElementById('orientation');
+        const orientationBtns = document.querySelectorAll('.ori-btn');
+        const primaryColor = document.getElementById('primaryColor');
+        const colorHex = document.getElementById('colorHex');
+        const theme = document.getElementById('theme');
+        const generateBtn = document.getElementById('generateBtn');
+        const statusMsg = document.getElementById('statusMessage');
+
+        // Simulateur
+        const phoneFrame = document.getElementById('phoneFrame');
+        const phoneScreen = document.getElementById('phoneScreen');
+        const btnAndroid = document.getElementById('btnAndroid');
+        const btnIos = document.getElementById('btnIos');
+        const previewAppName = document.getElementById('previewAppName');
+        const previewPackage = document.getElementById('previewPackage');
+        const previewOrientation = document.getElementById('previewOrientation');
+        const previewDevice = document.getElementById('previewDevice');
+        const fallbackContent = document.getElementById('fallbackContent');
+        const previewIframe = document.getElementById('previewIframe');
+        const statusTime = document.getElementById('statusTime');
+
+        // Toast
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastClose = document.getElementById('toastClose');
+
+        // ===== ORIENTATION =====
+        function setOrientation(value) {
+            orientation.value = value;
+            orientationBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === value);
+            });
+            // Mettre à jour le simulateur
+            phoneScreen.className = 'phone-screen ' + value;
+            const labels = { portrait: 'Portrait', landscape: 'Paysage', default: 'Automatique' };
+            previewOrientation.textContent = labels[value] || 'Portrait';
+            // Ajuster la largeur du téléphone pour le paysage
+            const frame = phoneFrame;
+            if (value === 'landscape') {
+                frame.style.width = '380px';
+            } else {
+                frame.style.width = '';
+            }
+            // Recalculer pour les petits écrans
+            if (window.innerWidth < 540) {
+                if (value === 'landscape') {
+                    frame.style.width = '280px';
+                } else {
+                    frame.style.width = '';
+                }
+            }
+            if (window.innerWidth < 380) {
+                if (value === 'landscape') {
+                    frame.style.width = '240px';
+                } else {
+                    frame.style.width = '';
+                }
+            }
+        }
+
+        orientationBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                setOrientation(this.dataset.value);
+            });
+        });
+
+        // ===== DEVICE SWITCH =====
+        function setDevice(device) {
+            if (device === 'ios') {
+                phoneFrame.className = 'phone-frame ios';
+                btnIos.classList.add('active');
+                btnAndroid.classList.remove('active');
+                previewDevice.textContent = 'iOS';
+                // Notch géré par CSS
+            } else {
+                phoneFrame.className = 'phone-frame android';
+                btnAndroid.classList.add('active');
+                btnIos.classList.remove('active');
+                previewDevice.textContent = 'Android';
+            }
+        }
+
+        btnAndroid.addEventListener('click', function() { setDevice('android'); });
+        btnIos.addEventListener('click', function() { setDevice('ios'); });
+
+        // ===== HORLOGE =====
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            statusTime.textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 30000);
+
+        // ===== COULEUR =====
+        primaryColor.addEventListener('input', function() {
+            colorHex.textContent = this.value;
+            // Appliquer un léger fond au simulateur
+            phoneScreen.style.backgroundColor = this.value + '08';
+        });
+
+        // ===== ICÔNE =====
+        iconUrl.addEventListener('input', function() {
+            const val = this.value.trim();
+            if (val) {
+                iconPreview.src = val;
+                iconPreview.onerror = function() {
+                    this.style.display = 'none';
+                };
+                iconPreview.style.display = 'block';
+            } else {
+                iconPreview.style.display = 'none';
+            }
+        });
+
+        resetIcon.addEventListener('click', function() {
+            const defaultIcon = 'https://cdn-icons-png.flaticon.com/512/5969/5969059.png';
+            iconUrl.value = defaultIcon;
+            iconPreview.src = defaultIcon;
+            iconPreview.style.display = 'block';
+        });
+
+        // ===== APERÇU EN TEMPS RÉEL =====
+        function updatePreview() {
+            const name = appName.value.trim() || 'Mon App';
+            previewAppName.textContent = name;
+
+            const pkg = packageId.value.trim() || 'com.example.app';
+            previewPackage.textContent = pkg;
+
+            // Chargement de l'iframe
+            const url = appUrl.value.trim();
+            if (url && isValidUrl(url)) {
+                fallbackContent.style.display = 'none';
+                previewIframe.style.display = 'block';
+                // On évite de recharger si c'est la même URL
+                if (previewIframe.src !== url) {
+                    previewIframe.src = url;
+                }
+            } else {
+                fallbackContent.style.display = 'flex';
+                previewIframe.style.display = 'none';
+                previewIframe.src = '';
+            }
+
+            // Thème (simulé via un filtre)
+            const themeVal = theme.value;
+            if (themeVal === 'dark') {
+                previewIframe.style.filter = 'invert(1) hue-rotate(180deg)';
+            } else {
+                previewIframe.style.filter = 'none';
+            }
+        }
+
+        function isValidUrl(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Écouteurs pour la prévisualisation
+        appUrl.addEventListener('input', updatePreview);
+        appName.addEventListener('input', updatePreview);
+        packageId.addEventListener('input', updatePreview);
+        theme.addEventListener('change', updatePreview);
+
+        // ===== TOAST =====
+        function showToast(message, duration = 4000) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        toastClose.addEventListener('click', function() {
+            toast.classList.remove('show');
+            clearTimeout(toast._timeout);
+        });
+
+        // ===== STATUS =====
+        function showStatus(message, type) {
+            statusMsg.innerHTML = message;
+            statusMsg.className = 'status-msg ' + type;
+        }
+
+        // ===== SOUMISSION =====
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!appUrl.value.trim() || !isValidUrl(appUrl.value.trim())) {
+                showStatus('❌ Veuillez entrer une URL valide (http:// ou https://).', 'error');
+                return;
+            }
+            if (!appName.value.trim()) {
+                showStatus('❌ Veuillez entrer un nom pour l\'application.', 'error');
+                return;
+            }
+            if (!packageId.value.trim()) {
+                showStatus('❌ Veuillez entrer un Package ID (ex: com.monprenom.app).', 'error');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span>⏳</span> Génération en cours...';
+            showStatus('🔨 Construction de l\'APK en cours... Cela peut prendre quelques instants.', 'loading');
+
+            // Simulation d'appel API
+            const delay = 1500 + Math.random() * 1500;
+            setTimeout(function() {
+                const success = Math.random() > 0.15;
+
+                if (success) {
+                    const apkName = (appName.value.trim() || 'app').replace(/\s+/g, '_') + '.apk';
+                    showStatus(
+                        '✅ APK généré avec succès !<br>' +
+                        '<a href="#" class="download-link" id="downloadSimulate">📥 Télécharger ' + apkName + '</a>',
+                        'success'
+                    );
+                    generateBtn.innerHTML = '<span>✅</span> APK prêt !';
+                    showToast('🎉 ' + appName.value.trim() + ' généré avec succès !');
+
+                    document.getElementById('downloadSimulate').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showToast('📥 Téléchargement de ' + apkName + ' (simulé)');
+                    });
+                } else {
+                    showStatus('❌ Erreur lors de la génération. Vérifiez les paramètres et réessayez.', 'error');
+                    generateBtn.innerHTML = '<span>🔄</span> Réessayer';
+                }
+                generateBtn.disabled = false;
+            }, delay);
+        });
+
+        // ===== INIT =====
+        // Orientation par défaut
+        setOrientation('portrait');
+        // Device par défaut
+        setDevice('android');
+        // Preview initiale
+        updatePreview();
+        // Couleur initiale
+        colorHex.textContent = primaryColor.value;
+        phoneScreen.style.backgroundColor = primaryColor.value + '08';
+
+        // Gestion du redimensionnement pour l'orientation paysage
+        window.addEventListener('resize', function() {
+            const currentOrientation = orientation.value;
+            const frame = phoneFrame;
+            if (currentOrientation === 'landscape') {
+                if (window.innerWidth < 540) {
+                    frame.style.width = '280px';
+                } else if (window.innerWidth < 380) {
+                    frame.style.width = '240px';
+                } else {
+                    frame.style.width = '380px';
+                }
+            } else {
+                frame.style.width = '';
+            }
+        });
+
+        // ===== ERREUR IFRAME =====
+        previewIframe.addEventListener('error', function() {
+            // Silencieux, on laisse le fallback
+        });
+
+        // Pour les sites qui bloquent l'iframe, on affiche le fallback
+        previewIframe.addEventListener('load', function() {
+            // On essaye de détecter si le contenu est accessible
+            try {
+                // Si on peut accéder au contenu, c'est bon
+                const doc = previewIframe.contentDocument || previewIframe.contentWindow?.document;
+                if (doc && doc.body && doc.body.innerHTML.length > 100) {
+                    fallbackContent.style.display = 'none';
+                    previewIframe.style.display = 'block';
+                }
+            } catch (_) {
+                // CORS bloqué, on garde l'iframe visible quand même
+                fallbackContent.style.display = 'none';
+                previewIframe.style.display = 'block';
+            }
+        });
+
+        // ===== RACCOURCI CLAVIER =====
+        // Enter pour soumettre
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                const form = document.getElementById('appForm');
+                if (form.contains(e.target)) {
+                    e.preventDefault();
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+
+        console.log('📱 Web2App Pro chargé !');
+        console.log('💡 Astuce : utilisez les boutons d\'orientation pour voir le rendu en paysage/portrait.');
+
+    })();
+</script>
+
+</body>
+</html>
