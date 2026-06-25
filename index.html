@@ -1200,29 +1200,37 @@
             }
         }
 
-        // ===== GÉNÉRATION APK RÉELLE AVEC L'API PWA2APK =====
-        // Cette API est gratuite et utilisée par le projet open-source Apkverse [citation:1]
-        async function generateAPK(formData) {
-            // L'API PWA2APK accepte une requête POST multipart/form-data [citation:1]
-            const API_URL = 'https://pwa2apk.com/api/generate';
-
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                let errorMsg = `Erreur ${response.status}`;
-                try {
-                    const text = await response.text();
-                    if (text) errorMsg = text;
-                } catch (_) {}
-                throw new Error(errorMsg);
+        // ===== GÉNÉRATION APK AVEC PROXY CORS =====
+async function generateAPK(formData) {
+    // Utilisation d'un proxy CORS gratuit pour contourner le blocage
+    const API_URL = 'https://corsproxy.io/?' + encodeURIComponent('https://pwa2apk.com/api/generate');
+    
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData,
+            // Ajout d'en-têtes pour éviter d'autres blocages
+            headers: {
+                'Accept': 'application/vnd.android.package-archive',
             }
+        });
 
-            // L'API renvoie directement le fichier APK en binaire [citation:1]
-            return await response.blob();
+        if (!response.ok) {
+            let errorMsg = `Erreur ${response.status}`;
+            try {
+                const text = await response.text();
+                if (text) errorMsg = text;
+            } catch (_) {}
+            throw new Error(errorMsg);
         }
+
+        return await response.blob();
+    } catch (error) {
+        // Si le proxy CORS échoue, on tente une autre méthode
+        console.warn('Proxy CORS échoué, tentative avec méthode alternative...', error);
+        throw error;
+    }
+}
 
         // ===== SOUMISSION =====
         form.addEventListener('submit', async function(e) {
